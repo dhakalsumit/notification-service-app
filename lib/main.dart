@@ -59,6 +59,7 @@ void onStart(ServiceInstance service) async {
     );
   });
   service.on("stopService").listen((event) {
+    
     service.stopSelf();
   });
 
