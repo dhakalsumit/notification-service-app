@@ -1,0 +1,3 @@
+isolates
+1. there are 2 ports one is send port and the other is receive port 
+2. send port can only send while receive can send as well as receive
