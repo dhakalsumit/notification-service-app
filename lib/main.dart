@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:notification_demo/try/notification_try.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +51,7 @@ initNotificationServicesInBackground() async {
 //onStart method.
 @pragma("vm:entry-point")
 void onStart(ServiceInstance service) async {
+  var index = 0;
   DartPluginRegistrant.ensureInitialized();
   service.on("setAsForeground").listen((event) {
     debugPrint("running in foreground $event");
@@ -59,14 +62,24 @@ void onStart(ServiceInstance service) async {
     );
   });
   service.on("stopService").listen((event) {
-    
     service.stopSelf();
   });
-
   Timer.periodic(const Duration(seconds: 5), (timer) async {
+    print("running once $index ");
+    index = index + 1;
+
+    var lat;
+    var apiUrl = 'https://jsonplaceholder.typicode.com/posts/$index';
+    final response = await http.get(Uri.parse(apiUrl));
+    final data = json.decode(response.body);
+    print(data);
+   await  Geolocator.getCurrentPosition().then((value) {
+      print(value);
+      lat = value.latitude;
+    });
     await FlutterLocalNotificationsPlugin().show(
       1,
-      "this is title ",
+      "you are in $lat and ${DateTime.now()}",
       DateTime.now().toIso8601String(),
       const NotificationDetails(
           android: AndroidNotificationDetails(
