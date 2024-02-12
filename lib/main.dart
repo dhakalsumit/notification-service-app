@@ -73,14 +73,14 @@ void onStart(ServiceInstance service) async {
     final response = await http.get(Uri.parse(apiUrl));
     final data = json.decode(response.body);
     print(data);
-   await  Geolocator.getCurrentPosition().then((value) {
+    await Geolocator.getCurrentPosition().then((value) {
       print(value);
       lat = value.latitude;
     });
     await FlutterLocalNotificationsPlugin().show(
       1,
-      "you are in $lat and ${DateTime.now()}",
-      DateTime.now().toIso8601String(),
+      "you are in $lat and ${DateTime.now()}, ",
+      "${DateTime.now().toIso8601String()}data is $data",
       const NotificationDetails(
           android: AndroidNotificationDetails(
               "android notification", "android notification name",
