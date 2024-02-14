@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ initNotificationServicesInBackground() async {
       ),
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
-        isForegroundMode: false,
+        isForegroundMode: true,
       ),
     );
   }
@@ -40,26 +41,27 @@ initNotificationServicesInBackground() async {
             channelGroupName: 'Basic group')
       ],
       debug: true);
+
   service.startService();
 }
 
 //onStart method
 // pragma is used for the entry point of the application
 @pragma("vm : entry-point")
-void onStart(ServiceInstance services) async {
+void onStart(ServiceInstance service) async {
   String? title;
   String? body;
-  services.on("setAsForeground").listen((event) {
+  service.on("setAsForeground").listen((event) {
     print("service on foreground  ${event?.entries}");
   });
-  services.on("setAsBackground").listen((event) {
+  service.on("setAsBackground").listen((event) {
     print("service on foreground  ${event?.entries}");
   });
-  services.on("stopService").listen((event) {
-    services.stopSelf();
+  service.on("stopService").listen((event) {
+    service.stopSelf();
   });
 
-  Timer.periodic(const Duration(seconds: 10), (timer) async {
+  Timer.periodic(const Duration(minutes: 20), (timer) async {
     var response = await RetrieveDataFromServer().getServerData();
     if (response != null) {
       title = response.title;
@@ -76,7 +78,7 @@ void onStart(ServiceInstance services) async {
               NotificationActionButton(
                 key: 'shop now ',
                 label: 'shop now ',
-                autoDismissible: false,
+                autoDismissible: true,
               ),
             ],
             content: NotificationContent(
@@ -85,7 +87,7 @@ void onStart(ServiceInstance services) async {
               backgroundColor: Colors.deepPurple,
               notificationLayout: NotificationLayout.BigText,
               summary: "this is summery ",
-              id: 1,
+              id: Random().nextInt(max(100, 1000)),
               channelKey: 'basic_channel',
               title: '$title',
               body: 'data is $title ${body ?? "null"}',
