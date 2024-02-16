@@ -61,13 +61,6 @@ void onStart(ServiceInstance service) async {
 
   Timer.periodic(const Duration(seconds: 20), (timer) async {
     var response = await RetrieveDataFromServer().getServerData();
-
-    // if (response != null) {
-    //   title = response.title;
-    //   body = response.body;
-    // }
-    // response != null
-    // ?
     if (response != null) {
       if (response.isNotEmpty) {
         for (var i = 0; i < response.length; i++) {
@@ -121,4 +114,3 @@ Future<bool> iosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   return true;
 }
-

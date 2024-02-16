@@ -15,6 +15,11 @@ class RetrieveDataFromServer {
       Position currentPosition = await Geolocator.getCurrentPosition();
       latitude = currentPosition.latitude;
       longitude = currentPosition.longitude;
+      await Hive.initFlutter();
+      await Hive.openBox("ipBox");
+      var box = Hive.box("ipBox");
+      print("object");
+      print(box.get("ip"));
 
       final response = await http.get(
         Uri.parse(

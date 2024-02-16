@@ -14,6 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox("ipBox");
+  print("retriving data from hive ${Hive.box("ipBox").get("ip")}");
   await Geolocator.requestPermission();
   await initNotificationServicesInBackground();
   if (await Geolocator.isLocationServiceEnabled() == false) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notification_demo/dummy/dummy_data.dart';
-import 'package:notification_demo/models/product_info_model.dart';
 import 'package:notification_demo/pages/error/error_screen.dart';
 import 'package:notification_demo/pages/notification/my_notification_page.dart';
 import 'package:notification_demo/services/provider.dart';
@@ -16,6 +15,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   late final TextEditingController _controller;
+  final box = Hive.box("ipBox");
   @override
   void initState() {
     super.initState();
@@ -157,7 +157,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ?.copyWith(color: Colors.grey[700]),
                   ),
                   Text(
-                    name == null ? "" : name.toString(),
+                    name ?? "",
                     style: const TextStyle(color: Colors.green),
                   ),
                   const SizedBox(
@@ -315,5 +315,5 @@ class _HomePageState extends ConsumerState<HomePage> {
 }
 
 final ipNameProvider = StateProvider<String?>((ref) {
-  return;
+  return Hive.box("ipBox").get("ip");
 });
