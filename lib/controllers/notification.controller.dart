@@ -30,6 +30,7 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onActionReceivedMethod(
       ReceivedAction receivedAction) async {
+    print("Notification is tapped");
     // Navigate into pages, avoiding to open the notification details page over another details page already opened
     if (receivedAction.buttonKeyPressed == "markAsRead") {
       MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(

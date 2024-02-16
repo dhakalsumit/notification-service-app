@@ -61,44 +61,56 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  Timer.periodic(const Duration(minutes: 20), (timer) async {
+  Timer.periodic(const Duration(seconds: 20), (timer) async {
     var response = await RetrieveDataFromServer().getServerData();
+
+    // if (response != null) {
+    //   title = response.title;
+    //   body = response.body;
+    // }
+    // response != null
+    // ?
     if (response != null) {
-      title = response.title;
-      body = response.body;
-    }
-    response != null
-        ? await AwesomeNotifications().createNotification(
+      if (response.isNotEmpty) {
+        for (var i = 0; i < response.length; i++) {
+          await AwesomeNotifications().createNotification(
             actionButtons: [
               NotificationActionButton(
                 key: 'markAsRead',
-                label: 'Mark as read',
+                label: 'open app',
                 autoDismissible: true,
               ),
               NotificationActionButton(
                 key: 'shop now ',
-                label: 'shop now ',
+                label: 'view details',
                 autoDismissible: true,
               ),
             ],
             content: NotificationContent(
               criticalAlert: true,
-              actionType: ActionType.DismissAction,
+              actionType: ActionType.Default,
               backgroundColor: Colors.deepPurple,
               notificationLayout: NotificationLayout.BigText,
-              summary: "this is summery ",
+              summary: "${response[i].shopName}",
               id: Random().nextInt(max(100, 1000)),
               channelKey: 'basic_channel',
-              title: '$title',
-              body: 'data is $title ${body ?? "null"}',
+              title: "${response[i].productName}",
+              body: "${response[i].productDescription}",
               payload: ({
-                "title": "This is the title",
-                "body": "This is the body",
-                "location": "This is the lat lng",
+                'id': response[i].id.toString(),
+                'productName': response[i].productName,
+                'productDescription': response[i].productDescription,
+                'offerPrice': response[i].offerPrice.toString(),
+                'originalPrice': response[i].originalPrice.toString(),
+                'productImage': response[i].productImage,
+                'shopName': response[i].shopName,
               }),
             ),
-          )
-        : null;
+          );
+        }
+      }
+    }
+    // : null;
   });
 }
 

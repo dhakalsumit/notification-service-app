@@ -1,6 +1,9 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:notification_demo/controllers/notification.controller.dart';
 import 'package:notification_demo/pages/home/home_page.dart';
 import 'package:notification_demo/pages/home/my_home_page.dart';
@@ -9,12 +12,15 @@ import 'package:notification_demo/services/init_notification_services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  var box = await Hive.openBox("ipBox");
+
   await Geolocator.requestPermission();
   await initNotificationServicesInBackground();
   if (await Geolocator.isLocationServiceEnabled() == false) {
     await Geolocator.requestPermission();
   }
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -56,8 +62,7 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
-            return MaterialPageRoute(
-                builder: (context) => const MyHomePage(title: MyApp.name));
+            return MaterialPageRoute(builder: (context) => const MyHomePage());
 
           case '/notification-page':
             return MaterialPageRoute(builder: (context) {
