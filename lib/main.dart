@@ -13,8 +13,7 @@ import 'package:notification_demo/services/init_notification_services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  var box = await Hive.openBox("ipBox");
-
+  await Hive.openBox("ipBox");
   await Geolocator.requestPermission();
   await initNotificationServicesInBackground();
   if (await Geolocator.isLocationServiceEnabled() == false) {

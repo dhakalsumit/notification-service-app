@@ -1,9 +1,12 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:notification_demo/models/product_info_model.dart';
 
 class MyNotificationPage extends StatelessWidget {
   final ReceivedAction? receivedAction;
-  const MyNotificationPage({super.key, this.receivedAction});
+  final ProductInfoModel? productInfoModel;
+  const MyNotificationPage(
+      {super.key, this.receivedAction, this.productInfoModel});
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +26,20 @@ class MyNotificationPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.35,
-                        width: double.maxFinite,
-                        child: Image.network(
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      width: double.maxFinite,
+                      child: Image.network(
+                        productInfoModel == null
+                            ? "${receivedAction?.payload?["productImage"]}"
+                            : productInfoModel!.productImage!,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.network(
                           "https://via.placeholder.com/150",
                           fit: BoxFit.cover,
-                        )),
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     const SizedBox(
                       height: 8,
                     ),
@@ -40,7 +51,9 @@ class MyNotificationPage extends StatelessWidget {
                         children: [
                           Center(
                             child: Text(
-                              "Shop Name",
+                              productInfoModel == null
+                                  ? "${receivedAction?.summary}"
+                                  : productInfoModel!.shopName!,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
@@ -54,7 +67,9 @@ class MyNotificationPage extends StatelessWidget {
                             height: 12,
                           ),
                           Text(
-                            "Product Name",
+                            productInfoModel == null
+                                ? "${receivedAction?.title}"
+                                : productInfoModel!.productName!,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -68,8 +83,9 @@ class MyNotificationPage extends StatelessWidget {
                             height: 8,
                           ),
                           Text(
-                            """The design presents the product with a large image at the top, followed by the product's name, offer details, pricing, and shop name organized neatly below.
-                   with the product image front and center, and offer details directly underneath, followed by price comparison and shop information.""",
+                            productInfoModel == null
+                                ? "${receivedAction?.body}"
+                                : productInfoModel!.productDescription!,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge
@@ -92,7 +108,9 @@ class MyNotificationPage extends StatelessWidget {
                               ),
                               const Spacer(),
                               Text(
-                                "\$ 100",
+                                productInfoModel == null
+                                    ? "${receivedAction?.payload?["offerPrice"]}"
+                                    : productInfoModel!.offerPrice!,
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
@@ -120,7 +138,9 @@ class MyNotificationPage extends StatelessWidget {
                               ),
                               const Spacer(),
                               Text(
-                                "\$ 100",
+                                productInfoModel == null
+                                    ? "${receivedAction?.payload?["originalPrice"]}"
+                                    : productInfoModel!.originalPrice!,
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium

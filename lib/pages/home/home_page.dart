@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:notification_demo/dummy/dummy_data.dart';
+import 'package:notification_demo/models/product_info_model.dart';
+import 'package:notification_demo/pages/error/error_screen.dart';
 import 'package:notification_demo/pages/notification/my_notification_page.dart';
+import 'package:notification_demo/services/provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -45,11 +50,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     TextFormField(
                       controller: _controller,
-                      onFieldSubmitted: (value) {
-                        ref
-                            .read(ipNameProvider.notifier)
-                            .update((state) => value);
-                      },
                       decoration: const InputDecoration(
                         hintStyle: TextStyle(
                           color: Colors.grey,
@@ -74,10 +74,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               )),
-                          onPressed: () {
+                          onPressed: () async {
+                            await Hive.box("ipBox").put("ip", _controller.text);
+                            print(Hive.box("ipBox").get("ip"));
+
                             ref
                                 .read(ipNameProvider.notifier)
                                 .update((state) => _controller.text);
+                            if (!mounted) {
+                              return;
+                            }
                             Navigator.pop(context);
                           },
                           child: const Text("Save",
@@ -92,6 +98,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                               borderRadius: BorderRadius.circular(8.0),
                             )),
                         onPressed: () {
+                          print(Hive.box("ipBox").get("ip"));
                           Navigator.pop(context);
                         },
                         child: const Text(
@@ -111,6 +118,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final name = ref.watch(ipNameProvider);
+    final listOfProduct = ref.watch(productListProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Geo Field Notification"),
@@ -119,7 +128,9 @@ class _HomePageState extends ConsumerState<HomePage> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => const MyNotificationPage(),
+                  builder: (_) => MyNotificationPage(
+                    productInfoModel: dummyModel[0],
+                  ),
                 ),
               );
             },
@@ -173,105 +184,127 @@ class _HomePageState extends ConsumerState<HomePage> {
               height: 12,
             ),
             Expanded(
-              child: ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(
-                  height: 12,
-                ),
-                itemCount: 10,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey[300]!),
-                      borderRadius: BorderRadius.circular(8),
+              child: listOfProduct.when(
+                data: (data) {
+                  return ListView.separated(
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 12,
                     ),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 8.0, bottom: 8.0, left: 8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Product Name ",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Text(
-                                "Original Price: \$ 100",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 6,
-                              ),
-                              Text(
-                                "Discount price: \$ 20",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                              ),
-                              const SizedBox(
-                                height: 8,
-                              ),
-                              MaterialButton(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                color: Colors.deepPurple,
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const MyNotificationPage(),
-                                    ),
-                                  );
-                                },
-                                child: const Text(
-                                  "More Details ",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              )
-                            ],
-                          ),
+                    itemCount: data?.length ?? 0,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        const Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: SizedBox(
-                            height: 120,
-                            width: 160,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                "https://picsum.photos/200/$index",
-                                fit: BoxFit.cover,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 8.0, bottom: 8.0, left: 8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    child: Text(
+                                      "${data?[index].productName}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 2,
+                                  ),
+                                  Text(
+                                    "Original Price: \$ ${data?[index].originalPrice}",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black,
+                                        ),
+                                  ),
+                                  const SizedBox(
+                                    height: 6,
+                                  ),
+                                  Text(
+                                    "Discount price: \$ ${data?[index].offerPrice}",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  MaterialButton(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    color: Colors.deepPurple,
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => MyNotificationPage(
+                                            productInfoModel: dummyModel[0],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text(
+                                      "More Details ",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                          ),
+                            const Spacer(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: SizedBox(
+                                height: 120,
+                                width: 150,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    "http://192.168.1.67:8000${data?[index].productImage}",
+                                    // "http://192.168.1.67:8000/media/productImages/Apple-MacBook-Air-M1-13-1.png",
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Container(
+                                                height: 120,
+                                                width: 150,
+                                                color: Colors.grey[400],
+                                                child: const Icon(Icons.error)),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 },
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+                error: (error, stack) => const Center(child: ErrorScreen()),
               ),
             ),
           ],

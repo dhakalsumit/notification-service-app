@@ -5,8 +5,8 @@ class ProductInfoModel {
   int? id;
   String? productName;
   String? productDescription;
-  double? offerPrice;
-  double? originalPrice;
+  String? offerPrice;
+  String? originalPrice;
   String? productImage;
   String? shopName;
   ProductInfoModel({
@@ -23,8 +23,8 @@ class ProductInfoModel {
     int? id,
     String? productName,
     String? productDescription,
-    double? offerPrice,
-    double? originalPrice,
+    String? offerPrice,
+    String? originalPrice,
     String? productImage,
     String? shopName,
   }) {
@@ -60,9 +60,9 @@ class ProductInfoModel {
           ? map['productDescription'] as String
           : null,
       offerPrice:
-          map['offerPrice'] != null ? map['offerPrice'] as double : null,
+          map['offerPrice'] != null ? map['offerPrice'] as String : null,
       originalPrice:
-          map['originalPrice'] != null ? map['originalPrice'] as double : null,
+          map['originalPrice'] != null ? map['originalPrice'] as String : null,
       productImage:
           map['productImage'] != null ? map['productImage'] as String : null,
       shopName: map['shopName'] != null ? map['shopName'] as String : null,

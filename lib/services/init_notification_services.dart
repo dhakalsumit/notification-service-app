@@ -49,8 +49,6 @@ initNotificationServicesInBackground() async {
 // pragma is used for the entry point of the application
 @pragma("vm : entry-point")
 void onStart(ServiceInstance service) async {
-  String? title;
-  String? body;
   service.on("setAsForeground").listen((event) {
     print("service on foreground  ${event?.entries}");
   });
@@ -88,14 +86,19 @@ void onStart(ServiceInstance service) async {
             ],
             content: NotificationContent(
               criticalAlert: true,
+              fullScreenIntent: true,
+              bigPicture:
+                  // "https://thumbs.dreamstime.com/b/grunge-not-found-framed-rounded-rectangle-stamp-not-found-stamp-seal-watermark-grunge-style-seal-shape-rounded-rectangle-134959326.jpg",
+                  "http://192.168.1.67:8000/media/productImages/Apple-MacBook-Air-M1-13-1.png",
               actionType: ActionType.Default,
               backgroundColor: Colors.deepPurple,
-              notificationLayout: NotificationLayout.BigText,
+              notificationLayout: NotificationLayout.BigPicture,
               summary: "${response[i].shopName}",
               id: Random().nextInt(max(100, 1000)),
               channelKey: 'basic_channel',
               title: "${response[i].productName}",
-              body: "${response[i].productDescription}",
+              body:
+                  "${response[i].productName} available at ${response[i].shopName} at ${response[i].offerPrice} only. Hurry up! Limited stock available.",
               payload: ({
                 'id': response[i].id.toString(),
                 'productName': response[i].productName,
@@ -118,3 +121,4 @@ Future<bool> iosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
   return true;
 }
+

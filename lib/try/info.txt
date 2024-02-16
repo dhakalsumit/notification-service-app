@@ -1,8 +1,0 @@
-isolates
-1. there are 2 ports one is send port and the other is receive port 
-2. send port can only send while receive can send as well as receive
-
-
-
-{"status":"OK","message":"INSIDE MALL","shop_distance":171.26,"offers":[{"id":10,"productName":"Macbook Air M3","offerTitle":"Macbook at best price","offerPrice":"115000.0","originalPrice":"145000.0","productImage":"/media/productImages/Apple-MacBook-Air-M1-13-1.png","shopName":"Balaji Stores"}]}
-I/flutter ( 6220): body is {status: OK, message: INSIDE MALL, shop_distance: 171.26, offers: [{id: 10, productName: Macbook Air M3, offerTitle: Macbook at best price, offerPrice: 115000.0, originalPrice: 145000.0, productImage: /media/productImages/Apple-MacBook-Air-M1-13-1.png, shopName: Balaji Stores}]}
