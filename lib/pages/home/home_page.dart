@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notification_demo/dummy/dummy_data.dart';
 import 'package:notification_demo/pages/error/error_screen.dart';
 import 'package:notification_demo/pages/notification/my_notification_page.dart';
+import 'package:notification_demo/services/ping_ip.dart';
 import 'package:notification_demo/services/provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -15,104 +16,13 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   late final TextEditingController _controller;
+  final _formKey = GlobalKey<FormState>();
+  bool isVisible = false;
   final box = Hive.box("ipBox");
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-  }
-
-  openSettings() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            backgroundColor: Colors.white,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: SizedBox(
-                width: double.maxFinite,
-                height: 240,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      "Enter your IP address to connect ",
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    TextFormField(
-                      controller: _controller,
-                      decoration: const InputDecoration(
-                        hintStyle: TextStyle(
-                          color: Colors.grey,
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        labelText: "Enter IP to connect",
-                        helperText: "IP is valid",
-                        hintText: "https://example.com",
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    SizedBox(
-                      width: double.maxFinite,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple[400],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              )),
-                          onPressed: () async {
-                            await Hive.box("ipBox").put("ip", _controller.text);
-                            print(Hive.box("ipBox").get("ip"));
-
-                            ref
-                                .read(ipNameProvider.notifier)
-                                .update((state) => _controller.text);
-                            if (!mounted) {
-                              return;
-                            }
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Save",
-                              style: TextStyle(color: Colors.white))),
-                    ),
-                    SizedBox(
-                      width: double.maxFinite,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            )),
-                        onPressed: () {
-                          print(Hive.box("ipBox").get("ip"));
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
   }
 
   @override
@@ -122,7 +32,9 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Geo Field Notification"),
+        title: const Text("Home Page"),
+        //currently there is no use of action button but incase you need to know how the notification page looks like without notification it can navigate over there.
+        //can be used for testing purpose and can be removed if not needed.
         actions: [
           IconButton(
             onPressed: () {
@@ -169,7 +81,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     color: Colors.purple,
-                    onPressed: openSettings,
+                    onPressed: () {
+                      setState(() {
+                        isVisible = true;
+                      });
+                    },
                     child: Text(
                       name == null ? "Add IP" : "change IP",
                       style: const TextStyle(
@@ -178,6 +94,104 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                   )
                 ],
+              ),
+            ),
+            Visibility(
+              visible: isVisible,
+              child: SizedBox(
+                width: double.maxFinite,
+                height: 240,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      "Enter your IP address to connect ",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    TextFormField(
+                      key: _formKey,
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))),
+                        labelText: "Enter IP to connect",
+                        hintText: "https://example.com",
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple[400],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              )),
+                          onPressed: () async {
+                            pingIp(_controller.text).then((value) async {
+                              if (value == true) {
+                                await Hive.box("ipBox")
+                                    .put("ip", _controller.text);
+
+                                ref
+                                    .read(ipNameProvider.notifier)
+                                    .update((state) => _controller.text);
+                                setState(() {
+                                  isVisible = false;
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                        duration: Duration(seconds: 1),
+                                        behavior: SnackBarBehavior.floating,
+                                        margin: EdgeInsets.all(20),
+                                        padding: EdgeInsets.all(12),
+                                        backgroundColor: Colors.red,
+                                        content: Center(
+                                          child: Text(
+                                              "Please enter a valid IP address"),
+                                        )));
+                              }
+                            });
+                          },
+                          child: const Text("Save",
+                              style: TextStyle(color: Colors.white))),
+                    ),
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            )),
+                        onPressed: () {
+                          setState(() {
+                            isVisible = false;
+                          });
+                        },
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(

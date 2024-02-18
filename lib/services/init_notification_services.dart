@@ -9,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notification_demo/services/retrive_data.services.dart';
 
 initNotificationServicesInBackground() async {
+  // running application in the background.
   var service = FlutterBackgroundService();
   if (Platform.isAndroid) {
     await service.configure(
@@ -22,6 +23,7 @@ initNotificationServicesInBackground() async {
       ),
     );
   }
+  //to create the notification and display to the user.
   AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
       //currently we are using default icon
@@ -50,12 +52,8 @@ initNotificationServicesInBackground() async {
 // pragma is used for the entry point of the application
 @pragma("vm : entry-point")
 void onStart(ServiceInstance service) async {
-  service.on("setAsForeground").listen((event) {
-    print("service on foreground  ${event?.entries}");
-  });
-  service.on("setAsBackground").listen((event) {
-    print("service on foreground  ${event?.entries}");
-  });
+  service.on("setAsForeground").listen((event) {});
+  service.on("setAsBackground").listen((event) {});
   service.on("stopService").listen((event) {
     service.stopSelf();
   });
@@ -82,9 +80,11 @@ void onStart(ServiceInstance service) async {
             content: NotificationContent(
               criticalAlert: true,
               fullScreenIntent: true,
+
+              //This picture is displayed in the notification bar
               bigPicture:
                   // "https://thumbs.dreamstime.com/b/grunge-not-found-framed-rounded-rectangle-stamp-not-found-stamp-seal-watermark-grunge-style-seal-shape-rounded-rectangle-134959326.jpg",
-                  "http://192.168.1.67:8000/media/productImages/Apple-MacBook-Air-M1-13-1.png",
+                  "${Hive.box("ip")}/media/productImages/Apple-MacBook-Air-M1-13-1.png",
               actionType: ActionType.Default,
               backgroundColor: Colors.deepPurple,
               notificationLayout: NotificationLayout.BigPicture,

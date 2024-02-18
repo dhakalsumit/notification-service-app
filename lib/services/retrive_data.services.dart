@@ -22,7 +22,7 @@ class RetrieveDataFromServer {
 
       final response = await http.get(
         Uri.parse(
-          'http://192.168.1.67:8000/offers/by-location/?latitude=$latitude&longitude=$longitude',
+          '${box.get("ip")}/offers/by-location/?latitude=$latitude&longitude=$longitude',
         ),
       );
       if (response.statusCode != 200) {
