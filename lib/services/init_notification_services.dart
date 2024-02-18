@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notification_demo/services/retrive_data.services.dart';
 
 initNotificationServicesInBackground() async {
@@ -60,6 +61,7 @@ void onStart(ServiceInstance service) async {
   });
 
   Timer.periodic(const Duration(seconds: 20), (timer) async {
+    Hive.initFlutter();
     var response = await RetrieveDataFromServer().getServerData();
     if (response != null) {
       if (response.isNotEmpty) {

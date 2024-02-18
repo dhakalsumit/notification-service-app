@@ -6,7 +6,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:notification_demo/controllers/notification.controller.dart';
 import 'package:notification_demo/pages/home/home_page.dart';
-import 'package:notification_demo/pages/home/my_home_page.dart';
 import 'package:notification_demo/pages/notification/my_notification_page.dart';
 import 'package:notification_demo/services/init_notification_services.dart';
 
@@ -62,7 +61,7 @@ class _MyAppState extends State<MyApp> {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/':
-            return MaterialPageRoute(builder: (context) => const MyHomePage());
+            return MaterialPageRoute(builder: (context) => const HomePage());
 
           case '/notification-page':
             return MaterialPageRoute(builder: (context) {

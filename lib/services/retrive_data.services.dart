@@ -15,18 +15,16 @@ class RetrieveDataFromServer {
       Position currentPosition = await Geolocator.getCurrentPosition();
       latitude = currentPosition.latitude;
       longitude = currentPosition.longitude;
-      await Hive.initFlutter();
-      await Hive.openBox("ipBox");
+      await Hive.openBox("ipBox").then((value) {
+        print("retriving data from hive ${Hive.box("ipBox").get("ip")}");
+      });
       var box = Hive.box("ipBox");
-      print("object");
-      print(box.get("ip"));
 
       final response = await http.get(
         Uri.parse(
           'http://192.168.1.67:8000/offers/by-location/?latitude=$latitude&longitude=$longitude',
         ),
       );
-      print(response.body);
       if (response.statusCode != 200) {
         throw Exception("error in getting data from server");
       }
@@ -44,14 +42,6 @@ class RetrieveDataFromServer {
         ));
       }
       return productInfo;
-
-      // print("body is $body");
-      // print("specific data is ${body["offers"][0]["offerTitle"]}");
-      // return ReceivedDataModel(
-      //     title: "${body["offers"][0]["offerTitle"]}",
-      //     body:
-      //         "Massive Price Drop on ${body["offers"][0]["offerTitle"]} Hurry Up! now at ${body["offers"][0]["offerPrice"]}",
-      //     userId: 1);
     } catch (e) {
       // print("error is $e");
       rethrow;

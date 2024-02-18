@@ -1,6 +1,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:notification_demo/models/product_info_model.dart';
+import 'package:notification_demo/pages/home/home_page.dart';
 
 class MyNotificationPage extends StatelessWidget {
   final ReceivedAction? receivedAction;
@@ -174,7 +175,12 @@ class MyNotificationPage extends StatelessWidget {
                   children: [
                     MaterialButton(
                         minWidth: (MediaQuery.of(context).size.width - 64) / 2,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                              (route) => false);
+                        },
                         color: Colors.red,
                         textColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
@@ -185,14 +191,19 @@ class MyNotificationPage extends StatelessWidget {
                     const Spacer(),
                     MaterialButton(
                         minWidth: (MediaQuery.of(context).size.width - 64) / 2,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()),
+                              (route) => false);
+                        },
                         color: Colors.deepPurple,
                         textColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
-                        child: const Text("Add to Cart")),
+                        child: const Text("Goto Home")),
                   ],
                 ),
               ))
