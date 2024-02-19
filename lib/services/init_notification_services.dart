@@ -58,10 +58,29 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
+  await Hive.initFlutter();
+  // await Hive.openBox("notificationBox");
+  var box = Hive.openBox("ipBox");
+  List<String> previousNotification = [];
   Timer.periodic(const Duration(seconds: 20), (timer) async {
-    Hive.initFlutter();
     var response = await RetrieveDataFromServer().getServerData();
+    List<String> newNotification = [];
+    print("running fine ");
+
     if (response != null) {
+      if (response.isNotEmpty) {
+        for (var i = 0; i < response.length; i++) {
+          newNotification.add(response[i].id.toString());
+        }
+      }
+    }
+    print("prev is $previousNotification");
+    print("new is $newNotification");
+    if (previousNotification.toString() == newNotification.toString()) {
+      print("they are same ");
+    }
+    if (response != null &&
+        newNotification.toString() != previousNotification.toString()) {
       if (response.isNotEmpty) {
         for (var i = 0; i < response.length; i++) {
           await AwesomeNotifications().createNotification(
@@ -84,7 +103,7 @@ void onStart(ServiceInstance service) async {
               //This picture is displayed in the notification bar
               bigPicture:
                   // "https://thumbs.dreamstime.com/b/grunge-not-found-framed-rounded-rectangle-stamp-not-found-stamp-seal-watermark-grunge-style-seal-shape-rounded-rectangle-134959326.jpg",
-                  "${Hive.box("ip")}/media/productImages/Apple-MacBook-Air-M1-13-1.png",
+                  "http://192.168.1.67:8000/media/productImages/Apple-MacBook-Air-M1-13-1.png",
               actionType: ActionType.Default,
               backgroundColor: Colors.deepPurple,
               notificationLayout: NotificationLayout.BigPicture,
@@ -108,6 +127,9 @@ void onStart(ServiceInstance service) async {
         }
       }
     }
+    print(previousNotification);
+    print(newNotification);
+    previousNotification = newNotification;
     // : null;
   });
 }

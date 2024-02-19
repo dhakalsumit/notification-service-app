@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:notification_demo/main.dart';
 
 class NotificationController {
@@ -22,6 +25,17 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onDismissActionReceivedMethod(
       ReceivedAction receivedAction) async {
+    print("working here ");
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      print("platform is android");
+      AndroidDeviceInfo androidInfo = await DeviceInfoPlugin().androidInfo;
+      print('Running on ${androidInfo.model}');
+      print('Running on ${androidInfo.serialNumber}');
+      print('Running on ${androidInfo.device}');
+      print('Running on ${androidInfo.manufacturer}');
+      print('Running on ${androidInfo.id}');
+    }
     print("Notification dismissed");
     // Your code goes here
   }

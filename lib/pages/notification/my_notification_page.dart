@@ -11,6 +11,7 @@ class MyNotificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(productInfoModel?.productImage);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -31,14 +32,14 @@ class MyNotificationPage extends StatelessWidget {
                       width: double.maxFinite,
                       child: Image.network(
                         productInfoModel == null
-                            ? "${receivedAction?.payload?["productImage"]}"
-                            : productInfoModel!.productImage!,
+                            ? "http://192.168.1.67:8000${receivedAction?.payload?["productImage"]}"
+                            : "http://192.168.1.67:8000${productInfoModel?.productImage}",
                         errorBuilder: (context, error, stackTrace) =>
                             Image.network(
                           "https://via.placeholder.com/150",
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fitHeight,
                       ),
                     ),
                     const SizedBox(
@@ -86,7 +87,8 @@ class MyNotificationPage extends StatelessWidget {
                           Text(
                             productInfoModel == null
                                 ? "${receivedAction?.body}"
-                                : productInfoModel!.productDescription!,
+                                : productInfoModel!.productDescription ??
+                                    "description not available",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge
@@ -111,7 +113,8 @@ class MyNotificationPage extends StatelessWidget {
                               Text(
                                 productInfoModel == null
                                     ? "${receivedAction?.payload?["offerPrice"]}"
-                                    : productInfoModel!.offerPrice!,
+                                    : productInfoModel?.offerPrice ??
+                                        "Not available ",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
@@ -141,7 +144,8 @@ class MyNotificationPage extends StatelessWidget {
                               Text(
                                 productInfoModel == null
                                     ? "${receivedAction?.payload?["originalPrice"]}"
-                                    : productInfoModel!.originalPrice!,
+                                    : productInfoModel?.originalPrice ??
+                                        "Unknown",
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
