@@ -47,19 +47,19 @@ class _HomePageState extends ConsumerState<HomePage> {
         actions: [
           IconButton(
             onPressed: () async {
-              print("working here ");
-              DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-              if (Platform.isAndroid) {
-                print("platform is android");
-                try {
-                  AndroidDeviceInfo androidInfo =
-                      await DeviceInfoPlugin().androidInfo;
-                  print('Running on ${androidInfo.model}'); // e.g. "Moto G (4)"
-                } catch (error) {
-                  print("error is $error");
-                }
-              }
-              print("Notification dismissed");
+              // print("working here ");
+              // DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+              // if (Platform.isAndroid) {
+              //   print("platform is android");
+              //   try {
+              //     AndroidDeviceInfo androidInfo =
+              //         await DeviceInfoPlugin().androidInfo;
+              //     print('Running on ${androidInfo.model}');
+              //   } catch (error) {
+              //     print("error is $error");
+              //   }
+              // }
+              // print("Notification dismissed");
             },
             icon: const Icon(
               Icons.settings,
@@ -234,11 +234,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                       itemCount: data?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                        print(data?[index].id);
-                        print(data?[index].offerPrice);
-                        print(data?[index].originalPrice);
-                        print(data?[index].productImage);
-                        print(data?[index].productName);
                         return Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -320,7 +315,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                 productImage:
                                                     data?[index].productImage,
                                                 shopName: data?[index].shopName,
-                                                
                                               ),
                                             ),
                                           ),
@@ -344,6 +338,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: Image.network(
+                                      //TODO : add Hive.box(ipBox).get("ip") in place of localhost ip
                                       "http://192.168.1.67:8000${data?[index].productImage}",
                                       // "http://192.168.1.67:8000/media/productImages/Apple-MacBook-Air-M1-13-1.png",
                                       errorBuilder: (context, error,
