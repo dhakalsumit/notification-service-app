@@ -22,6 +22,8 @@ class RetrieveDataFromServer {
 
       final response = await http.get(
         Uri.parse(
+          //TODO: we need to use box.get("ip") instead of the hardcoded ip address.
+//like this:
           // '${box.get("ip")}/offers/by-location/?latitude=$latitude&longitude=$longitude',
           'http://192.168.1.67:8000/offers/by-location/?latitude=$latitude&longitude=$longitude',
         ),
@@ -30,7 +32,7 @@ class RetrieveDataFromServer {
         throw Exception("error in getting data from server");
       }
       var body = jsonDecode(response.body);
-      print(response.body);
+
       List<ProductInfoModel> productInfo = [];
       for (var i = 0; i < body["offers"].length; i++) {
         productInfo.add(ProductInfoModel(

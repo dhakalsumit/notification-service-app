@@ -4,7 +4,6 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:notification_demo/dummy/dummy_data.dart';
 import 'package:notification_demo/models/product_info_model.dart';
 import 'package:notification_demo/pages/error/error_screen.dart';
 import 'package:notification_demo/pages/notification/my_notification_page.dart';

@@ -1,5 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:notification_demo/models/product_info_model.dart';
 import 'package:notification_demo/pages/home/home_page.dart';
 
@@ -11,7 +12,7 @@ class MyNotificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(productInfoModel?.productImage);
+    final box = Hive.box("ipBox");
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -32,6 +33,8 @@ class MyNotificationPage extends StatelessWidget {
                       width: double.maxFinite,
                       child: Image.network(
                         productInfoModel == null
+                            //TODO : for ip if we need to get from local storage we can do box.get("ip");
+                            // or Hive.box("ipBox").get("ip");
                             ? "http://192.168.1.67:8000${receivedAction?.payload?["productImage"]}"
                             : "http://192.168.1.67:8000${productInfoModel?.productImage}",
                         errorBuilder: (context, error, stackTrace) =>

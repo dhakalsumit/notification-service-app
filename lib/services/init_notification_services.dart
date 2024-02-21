@@ -25,7 +25,7 @@ initNotificationServicesInBackground() async {
   }
   //to create the notification and display to the user.
   AwesomeNotifications().initialize(
-      // set the icon to null if you want to use the default app icon
+      //TODO: If we want to use the custom icon then we need to update the icon path here.
       //currently we are using default icon
       null,
       [
@@ -64,8 +64,11 @@ void onStart(ServiceInstance service) async {
   List<String> previousNotification = [];
   Timer.periodic(const Duration(seconds: 20), (timer) async {
     var response = await RetrieveDataFromServer().getServerData();
+
+    // this block is responsible for comparing the previous notification with the new notification.
+    //if the notification is not matched then it will create the new notification and send it to the user.
+    //TODO: This is not tested for multiple notifications. It is only tested for single notification. should work fine for multiple notification as well .
     List<String> newNotification = [];
-    print("running fine ");
 
     if (response != null) {
       if (response.isNotEmpty) {
@@ -74,11 +77,12 @@ void onStart(ServiceInstance service) async {
         }
       }
     }
-    print("prev is $previousNotification");
-    print("new is $newNotification");
+
     if (previousNotification.toString() == newNotification.toString()) {
-      print("they are same ");
+      debugPrint("they are same ");
     }
+
+    // this block is responsible for creating the notification and sending it to the user.
     if (response != null &&
         newNotification.toString() != previousNotification.toString()) {
       if (response.isNotEmpty) {
@@ -102,7 +106,11 @@ void onStart(ServiceInstance service) async {
 
               //This picture is displayed in the notification bar
               bigPicture:
-                  // "https://thumbs.dreamstime.com/b/grunge-not-found-framed-rounded-rectangle-stamp-not-found-stamp-seal-watermark-grunge-style-seal-shape-rounded-rectangle-134959326.jpg",
+                  //TODO: Here we need to update the image url. Currently it is hardcoded.
+                  // it should something like this.
+                  //    Hive.box("ipBox").get("ip") + response[i].productImage
+                  // where Hive.box("ipBox").get("ip") will get us http://192.168.1.67:8000
+                  // and  response[i].productImage will get us /media/productImages/Apple-MacBook-Air-M1-13-1.png
                   "http://192.168.1.67:8000/media/productImages/Apple-MacBook-Air-M1-13-1.png",
               actionType: ActionType.Default,
               backgroundColor: Colors.deepPurple,
@@ -127,8 +135,6 @@ void onStart(ServiceInstance service) async {
         }
       }
     }
-    print(previousNotification);
-    print(newNotification);
     previousNotification = newNotification;
     // : null;
   });
