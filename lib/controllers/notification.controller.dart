@@ -27,10 +27,9 @@ class NotificationController {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       if (Platform.isAndroid) {
         AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        // print('Running on ${androidInfo.model}');
-        // print('Serial number is  ${androidInfo.serialNumber}');
+       
         //TODO: (INFO)- Serial numeber can be trickey to get, it may not be available on all devices. it responds unknown in some devices.
-
+          
         // print('Running on ${androidInfo.device}');
         // print('Manufacturer is  ${androidInfo.manufacturer}');
         // print('android id is  ${androidInfo.id}');

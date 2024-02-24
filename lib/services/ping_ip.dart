@@ -5,7 +5,7 @@ Future<bool> pingIp(String ip) async {
   try {
     // TODO : use ip instead of the hardcoded ip address.
     final response = await http.get(
-      Uri.parse("http://192.168.1.67/ping/"),
+      Uri.parse("http://192.168.1.67:8000/ping/"),
     );
     //TODO : check the response and return true or false accordingly. if it is true then ip will be stored in local storage. else not.
     if (response.statusCode == 200) {

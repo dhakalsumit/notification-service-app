@@ -31,6 +31,7 @@ class RetrieveDataFromServer {
       if (response.statusCode != 200) {
         throw Exception("error in getting data from server");
       }
+      
       var body = jsonDecode(response.body);
 
       List<ProductInfoModel> productInfo = [];
